@@ -1,32 +1,35 @@
 #include "draw_triangle.h"
 #include "utils.h"
 
+static void triangle_fractal_recursion(point point1, point point2, point point3, double lEnd);
+//Es llamada opr triangle fractal, es la funcion recursiva
 
-void triangle_fractal(double xstart, double ystart, double leftAngle, double rightAngle, double lStart, double lEnd)
+
+void triangle_fractal(infoType * myData)
 {
-	double topAngle = 180 - abso(leftAngle) - rightAngle; 
+	double topAngle = 180 - abso(myData->leftAngle) - myData->rightAngle;
 	double lenghtRightSide, lenghtLeftSide;
 	point leftPoint, topPoint, rightPoint;//Los puntos del triangulo 
 
-	leftPoint.xcoord = xstart;
-	leftPoint.ycoord = ystart;
-	rightPoint.xcoord = xstart + lStart;
-	rightPoint.ycoord = ystart;
+	leftPoint.xcoord = myData->x0;
+	leftPoint.ycoord = myData->y0;
+	rightPoint.xcoord = myData->x0 + myData->lStart;
+	rightPoint.ycoord = myData->y0;
 	//coordenadas de los dos primeros puntos
-	lenghtLeftSide = sin(toRadian(rightAngle)) *lStart / sin(toRadian(topAngle)); 
-	if (leftAngle == 90.0) {
-		topPoint.xcoord = xstart;
-		topPoint.ycoord = ystart - lStart * tan(toRadian(abso(rightAngle)));
+	lenghtLeftSide = sin(toRadian(myData->rightAngle)) *myData->lStart / sin(toRadian(topAngle));
+	if (myData->leftAngle == 90.0) {
+		topPoint.xcoord = myData->x0;
+		topPoint.ycoord = myData->y0 - myData->lStart * tan(toRadian(abso(myData->rightAngle)));
 	}//calculo el punto superior
 	else {
-		topPoint.xcoord = xstart + lenghtLeftSide * cos(toRadian(abso(leftAngle)));
-		topPoint.ycoord = ystart - lenghtLeftSide * sin(toRadian(abso(leftAngle)));
+		topPoint.xcoord = myData->x0 + lenghtLeftSide * cos(toRadian(abso(myData->leftAngle)));
+		topPoint.ycoord = myData->y0 - lenghtLeftSide * sin(toRadian(abso(myData->leftAngle)));
 	}
 
-	al_draw_triangle(xstart, ystart, rightPoint.xcoord, rightPoint.ycoord, topPoint.xcoord, topPoint.ycoord, al_map_rgb(213, 38, 181), THICC);
+	al_draw_triangle(myData->x0, myData->y0, rightPoint.xcoord, rightPoint.ycoord, topPoint.xcoord, topPoint.ycoord, al_map_rgb(213, 38, 181), THICC);
 	al_flip_display();
 
-	triangle_fractal_recursion(leftPoint, rightPoint, topPoint, lEnd);
+	triangle_fractal_recursion(leftPoint, rightPoint, topPoint, myData->lEnd);
 
 }
 
