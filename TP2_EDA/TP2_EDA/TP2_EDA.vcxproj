@@ -136,10 +136,19 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="draw_triangle.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="mandelbrot.cpp" />
+    <ClCompile Include="parseCmdLine.cpp" />
+    <ClCompile Include="polygon.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="draw_triangle.h" />
+    <ClInclude Include="general.h" />
+    <ClInclude Include="input_manage_verification.h" />
+    <ClInclude Include="mandelbrot.h" />
+    <ClInclude Include="parseCmdLine.h" />
+    <ClInclude Include="polygon.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
