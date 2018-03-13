@@ -2,7 +2,7 @@
 #include "utils.h"
 
 static void triangle_fractal_recursion(point point1, point point2, point point3, double lEnd);
-//Es llamada opr triangle fractal, es la funcion recursiva
+//Es llamada por triangle fractal, es la funcion recursiva
 
 
 void triangle_fractal(infoType * myData)
@@ -44,7 +44,7 @@ void triangle_fractal_recursion(point p1, point p2, point p3, double lEnd)
 	al_draw_line(p1.xcoord, p1.ycoord, massCenter.xcoord, massCenter.ycoord, actualColor, THICC);
 	al_draw_line(p2.xcoord, p2.ycoord, massCenter.xcoord, massCenter.ycoord, actualColor, THICC);
 	al_draw_line(p3.xcoord, p3.ycoord, massCenter.xcoord, massCenter.ycoord, actualColor, THICC);//dibujo al centro desde cada esquina
-	al_rest(0.01);//para que se aprecie la progrecion
+	al_rest(0.01);//para que se aprecie la progresion
 	al_flip_display();
 	triangle_fractal_recursion(p1, p2, massCenter, lEnd);//los 3 triangulos formados
 	triangle_fractal_recursion(p1, p3, massCenter, lEnd);
