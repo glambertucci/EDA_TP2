@@ -1,6 +1,7 @@
 #include "draw_triangle.h"
 #include "utils.h"
 
+
 static void triangle_fractal_recursion(point point1, point point2, point point3, double lEnd);
 //Es llamada opr triangle fractal, es la funcion recursiva
 

@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <ctype.h>
 #include "parseCmdLine.h"
+#include "draw_triangle.h"
+#include "mandelbrot.h"
+#include "polygon.h"
 
 /******************************
 *********verifiedInterval******
@@ -259,15 +262,15 @@ void runFractal(infoType * fractalInfo, ALLEGRO_DISPLAY* display)
 	Coord_t pi;
 	Coord_t pf;
 	if (!strcmp(userInput->type, "UNIFORME"))
-		triangle_fractal(&fractalInfo);
+		triangle_fractal(fractalInfo);
 
-	else if (!strcmp(userInput->type, "OCTOGONO"))
+	else if (!strcmp(userInput->type, "POLIGONO"))
 	{
-		//FALTA LA DE GERMO!!!
+		polygon(fractalInfo);
 	}
 	else if (!strcmp(userInput->type, "MANDELBROT"))
 	{
-		MandelAl(&fractalInfo, display);
+		MandelAl(fractalInfo, display);
 	}
 }
 
@@ -316,8 +319,8 @@ int parseCallback(char *key, char *value, void *userInput)
 				myData->type = "UNIFORME";
 				validInput = true;
 			}
-			else if (!strcmp(value, "OCTOGONO")) {
-				myData->type = "OCTOGONO";
+			else if (!strcmp(value, "POLIGONO")) {
+				myData->type = "POLIGONO";
 				validInput = true;
 			}
 			else if (!strcmp(value, "MANDELBROT")) {
@@ -331,6 +334,12 @@ int parseCallback(char *key, char *value, void *userInput)
 
 			//verifico que lStart no haya sido inicializada por usuario y pertenezca a (0, 100]	
 			validInput = verifiedIntervalAndInit(myData->lStartInit, &myData->lStart, value, 0, false, 100, true);
+
+		}
+		else if (!strcmp(key, "N")) {
+
+			//verifico que lStart no haya sido inicializada por usuario y pertenezca a (0, 100]	
+			validInput = verifiedIntervalAndInit(myData->N, &myData->N, value, 0, false, 100, true);
 
 		}
 		else if (!strcmp(key, "LEND")) {

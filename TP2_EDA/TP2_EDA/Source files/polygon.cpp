@@ -57,7 +57,7 @@ int main(int argc, char ** argv)
 	return 0;
 }*/
 
-void polygon(infoType *myData);
+
 void recursive_polygon(double xi, double yi, double lStart, double lConst, double lEnd, unsigned int gradoPoligono, unsigned int angle);
 
 //**************                        DIBUJAR_POLIGONO           ***********************/

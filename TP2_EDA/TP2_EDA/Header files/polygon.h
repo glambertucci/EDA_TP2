@@ -23,10 +23,6 @@
 #define ABS(x) ((x)<0?(-(x)):(x))
 #define SQUARE(x) ((x)*(x))
 
-void reqFractalY(double xCenter, double yCenter, double leftAngle, double rightAngle,
-	double lStart, double lConstant, double lEnd, double *saved_leftAngle, double *saved_rightangle);
-void triangle_fractal(double xDrawstart, double yDrawstart, double leftAngle, double rightAngle, double lStart, double lEnd);
-void recursive_polygon(double xi, double yi, double lStart, double lConst, double lEnd, unsigned int gradoPoligono);
-
+void polygon(infoType *myData);
 #endif /* DRAW_FRACTALS_H */
 
