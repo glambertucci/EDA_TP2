@@ -1,4 +1,4 @@
-
+//*********************     BILBIOTECAS A UTILIZAR  ************************//
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>
 #include <allegro5/allegro_primitives.h>
@@ -7,64 +7,25 @@
 #include "input_manage_verification.h"//data types
 #include "polygon.h"
 
+
+//*********************           MACROS          ************************//
 #define DISPLAY_X 1080
 #define DISPLAY_Y 800
 #define LENGTH 200
 #define POLIGONO 5
 
+//*********************     DECLARACIÓN DE FUNCIONES LOCALES  ************************//
 
+//Función encargada de la recursividad ddel polígono
+static void recursive_polygon(double xi, double yi, double lStart, double lConst, double lEnd, unsigned int gradoPoligono, unsigned int angle);
+
+
+//*********************     DEFINICIÓN DE FUNCIONES GLOBALES  ************************//
+
+//**************                        POLYGON            ***********************/
 /*
-int main(int argc, char ** argv)
-{
-	ALLEGRO_DISPLAY *display = NULL;
-	punto_t puntoinicial[8];
-	double xCenter = DISPLAY_X / 2, yCenter = DISPLAY_Y / 2;
-	int lStart = LENGTH;
-	int contador;
-	double lConst = 0.4, lEnd = 2;
-	int polygonType = POLIGONO;
-
-
-
-	if (al_init())
-	{
-		if (al_init_primitives_addon())
-		{
-			display = al_create_display(DISPLAY_X, DISPLAY_Y);
-			if (display)
-			{
-				//Le ponemos el nombre a la ventana.
-				al_set_window_title(display, "Poligono regular");
-				al_clear_to_color(al_map_rgb(0, 0, 0));
-
-				recursive_polygon(xCenter, yCenter, lStart, lConst, lEnd, polygonType);
-
-				//Esperamos 10.
-				al_rest(10.0);
-
-				//Destruimos el display para no generar memory leaks.
-				al_destroy_display(display);
-
-			}
-			else
-				fprintf(stderr, "failed to create display1!\n");
-
-			//Cerramos apropiadamente el addon de primitives.
-			al_shutdown_primitives_addon();
-		}
-	}
-	//The end.
-	return 0;
-}*/
-
-
-void recursive_polygon(double xi, double yi, double lStart, double lConst, double lEnd, unsigned int gradoPoligono, unsigned int angle);
-
-//**************                        DIBUJAR_POLIGONO           ***********************/
-/*
-*Función encargada de dibujar el fractal del polígono. Se dibuja el políono central  luego ir dibujando la versión
-*acotada en los vértices, asi hasta completar los mismos. Esto último se hace desde la función recursiva, la principal 
-*sólo imprime el polígono central.
+*Función encargada de dibujar el fractal del polígono. Se dibuja el políono central  para luego ir dibujando la versión
+*acotada en los vértices, asi hasta completar los mismos. 
 *Se puede tomar polígonos regulares desde 3 lados hasta 15, más allá de ese valor ya no se aprecia realmente
 *ninguna diferencia por lo que se decido a acotarlo.
 *
@@ -90,7 +51,9 @@ void polygon(infoType * myData)
 }
 
 
-void recursive_polygon(double xi, double yi, double lStart, double lConst, double lEnd, unsigned int gradoPoligono, unsigned int angulo)
+//*********************     DEFINICIÓN DE FUNCIONES LOCALES  ************************//
+
+static void recursive_polygon(double xi, double yi, double lStart, double lConst, double lEnd, unsigned int gradoPoligono, unsigned int angulo)
 {
 	if (lStart <= lEnd) //Caso base
 		return;

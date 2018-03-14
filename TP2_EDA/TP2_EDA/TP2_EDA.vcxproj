@@ -149,7 +149,6 @@
   <ItemGroup>
     <ClInclude Include="draw_triangle.h" />
     <ClInclude Include="general.h" />
-    <ClInclude Include="input_manage_verification.h" />
     <ClInclude Include="mandelbrot.h" />
     <ClInclude Include="parseCmdLine.h" />
     <ClInclude Include="polygon.h" />

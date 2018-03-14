@@ -44,9 +44,6 @@
     <ClInclude Include="general.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="input_manage_verification.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="mandelbrot.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
