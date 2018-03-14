@@ -1,4 +1,5 @@
-﻿#include <parseCmdLine.h>
+﻿#include "parseCmdLine.h"
+#include <stdio.h>
 
 int parseCmdLine(int argc, char *argv[], pCallback infoAnalysis, void *userData){
 
@@ -29,7 +30,7 @@ int parseCmdLine(int argc, char *argv[], pCallback infoAnalysis, void *userData)
 				errorParser = NO_VALUE_ERROR;	
                         
 			
-			else if(! (*infoAnalysis)(&argv[stringNumber][1], argv[nextStringNumber], userData) )  	//envio sin el guiòn!!!	
+			else if(! (*infoAnalysis)((argv[stringNumber]+1), argv[nextStringNumber], userData) )  	//envio sin el guiòn!!!	
 				
 				errorParser = PROCESSING_ERROR;
 		
@@ -51,7 +52,7 @@ int parseCmdLine(int argc, char *argv[], pCallback infoAnalysis, void *userData)
 									
 		
 		}
-
+		
 	
 
 		
@@ -61,7 +62,7 @@ int parseCmdLine(int argc, char *argv[], pCallback infoAnalysis, void *userData)
                 
         
 	} 
-	
+	printf("\n%d\n", errorParser);
 	
 	return errorParser;
 

@@ -1,5 +1,5 @@
 #include "mandelbrot.h"
-#include "general.h"
+
 
 #define LIMIT 255							//Limite de iteraciones
 #define OFFSET 50							//Valor para las iteraciones intermedias

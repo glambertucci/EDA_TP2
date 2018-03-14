@@ -6,6 +6,36 @@
 #include "draw_triangle.h"
 #include "mandelbrot.h"
 #include "polygon.h"
+#include <allegro5/allegro.h>
+#include <allegro5/allegro_primitives.h>
+#include <string.h>
+
+#define SCREEN_WIDTH	400	
+#define SCREEN_HEIGHT	600
+
+int parseCallback(char *key, char *value, void *userInput);
+
+
+
+/*************************************
+*********verifiedIntervalAndInit******
+**************************************
+*verifiedIntervalAndInit se fija si la variable de la estructura de tipo infoType NO ha sido inicializada
+*y verifica si pertenece al intervalo de valores correctos. En caso de ser así, guarda el nuevO valor en la estrucutra
+*
+*INPUT:
+*	1) isInit : bool que es verdadero si la variable a sido previamente inicializada.
+*	2) parameter: variable en la que se guardará el valor del string en float en caso de ser un input correcto.
+*	3) a : extremo inferior del intervalo.
+*	4) aClosed : booleano que es verdadero si el intervalo está cerrado en a, falso si no.
+*	5) b : extremo superior del intervalo.
+*	6) bClosed : booleano que es verdadero si el intervalo está cerrado en b, falso si no.
+*
+*OUTPUT:
+*	booleando. true si el número pertenece y la variable no había sido previamente inicializada. false caso contrario.
+*/
+
+bool verifiedIntervalAndInit(bool isInit, double * parameter, char *value, double a, bool aClosed, double b, bool bClosed);
 
 /******************************
 *********verifiedInterval******
@@ -100,6 +130,7 @@ int main(int argc, char *argv[])
 	//CHEQUEAR QUE USERINPUT SE INICIALICE SIEMPRE TODO EN 0 Y EN FALSE!!!
 	infoType userInput;
 	pCallback functionPtr = &parseCallback;
+	ALLEGRO_DISPLAY *display = NULL;
 
 	if (al_init())
 	{												//inicializa allegro
@@ -110,7 +141,7 @@ int main(int argc, char *argv[])
 				display = al_create_display(900.0, 700.0);
 				if (!display)
 				{
-					printf(stderr, "Error: No se logró crear display.\n");
+					fprintf(stderr, "Error: No se logró crear display.\n");
 				}
 				runFractal(&userInput, display);
 			}
@@ -125,7 +156,7 @@ int main(int argc, char *argv[])
 	}
 	else printf("Error: No se pudo inicializar allegro!\n");
 
-
+	printf("%s", userInput.type);
 
 	return 0;
 }
@@ -138,54 +169,54 @@ bool verifiedData(infoType * userInput) {
 						por lo que si error es true en algún momento nunca dejará de serlo hasta salir de la función*/
 
 						//verifico que se haya ingresado un fractal. El caso en que se haya ingresado uno incorrecto esta cubierto por parseCmdLine.
-	if (userInput->type != NULL) {
+	if (!strcmp(userInput->type, "ERROR")) {
 		printf("No se ha indicado el tipo de fractal que se quiere dibujar!!");
 		error = true;
 	}
 	else if (!strcmp(userInput->type, "UNIFORME")) {
 
 		//verifico que lStart haya sido inicializada
-		if (!fractalInfo->lStartInit) {
+		if (!userInput->lStartInit) {
 			printf("lStart no ha sido inicializado.");
 			error = true;
 		}
 		//Elejimos NO poner else if para que al usuario le aparezcan todos los errores de input.
 
 		//verifico que lEnd haya sido inicializada por usuario 
-		if (!fractalInfo->lEndInit) {
+		if (!userInput->lEndInit) {
 			printf("lEnd no ha sido inicializado.");
 			error = true;
 		}
 
 		//verifico que leftAngle haya sido inicializada por usuario
-		if (!fractalInfo->leftAngleInit) {
+		if (!userInput->lAngleInit) {
 			printf("leftAngle no ha sido inicializado.");
 			error = true;
 		}
 
 		//verifico que rightAngle haya sido inicializada por usuario
-		if (fractalInfo->rightAngleInit) {
+		if (userInput->rAngleInit) {
 			printf("rightAngle no ha sido inicializado.");
 			error = true;
 		}
 
 		//verifico que lConstant no se haya inicializado, para ser coherente con el tipo e fractal requerido
-		if (fractalInfo->lConstantInit) {
+		if (userInput->lConstantInit) {
 			printf("Le ha asignado un valor a lConstant cuando UNIFORME no lo necesita!");
 			error = true;
 		}
 
-		if (!fractalInfo->x0Init || !fractalInfo->y0Init || !fractalInfo->xFInit || !fractalInfo->yFInit) {
+		if (!userInput->x0Init || !userInput->y0Init || !userInput->xFInit || !userInput->yFInit) {
 			printf("No se han inicializado correctamente las coordenadas!");
 			error = true;
 		}
 
 
 	}
-	else if (!strcmp(userInput->type, "OCTOGONO")) {
+	else if (!strcmp(userInput->type, "POLIGONO")) {
 
 		//verifico que lStart haya sido inicializada por usuario
-		if (!fractalInfo->lStartInit) {
+		if (!userInput->lStartInit) {
 			printf("lStart no ha sido inicializado.");
 			error = true;
 		}
@@ -193,38 +224,43 @@ bool verifiedData(infoType * userInput) {
 		//Elejimos NO poner else if para que al usuario le aparezcan todos los errores de input.
 
 		//verifico que lEnd haya sido inicializada por usuario
-		if (!fractalInfo->lEndInit) {
+		if (!userInput->lEndInit) {
 			printf("lEnd no ha sido inicializado.");
 			error = true;
 		}
 
 		//verifico que lConstant haya sido inicializada
-		if (!fractalInfo->lConstantInit) {
+		if (!userInput->lConstantInit) {
 			printf("lConstant no ha sido inicializado.");
 			error = true;
 		}
 
 
 		//verifico que los ángulos no hayan sido inicializados para que haya coherencia con el fractal que se está pidiendo
-		if (fractalInfo->rAngleInit || fractalInfo->lAngleInit) {
+		if (userInput->rAngleInit || userInput->lAngleInit) {
 			printf("Los ángulos no pueden ser inicializados, ya que no tiene sentido con el tipo de fractal que se está pidiendo");
 			error = true;
 		}
 
-		if (!fractalInfo->x0Init || !fractalInfo->y0Init || !fractalInfo->xFInit || !fractalInfo->yFInit) {
+		if (!userInput->x0Init || !userInput->y0Init || !userInput->xFInit || !userInput->yFInit) {
 			printf("No se han inicializado correctamente las coordenadas!");
+			error = true;
+		}
+
+		if (!userInput->Ninit ) {
+			printf("No se ha inicializado correctamente el tipo de polígono");
 			error = true;
 		}
 
 	}
 	else if (!strcmp(userInput->type, "MANDELBROT")) {
 
-		if (!fractalInfo->x0Init || !fractalInfo->y0Init || !fractalInfo->xFInit || !fractalInfo->yFInit) {
+		if (!userInput->x0Init || !userInput->y0Init || !userInput->xFInit || !userInput->yFInit) {
 			printf("No se han inicializado correctamente las coordenadas!");
 			error = true;
 		}
 		//verifico que lStart NO haya sido inicializada por usuario
-		if (fractalInfo->lStartInit) {
+		if (userInput->lStartInit) {
 			printf("lStart ha sido inicializado.");
 			error = true;
 		}
@@ -232,20 +268,20 @@ bool verifiedData(infoType * userInput) {
 		//Elejimos NO poner else if para que al usuario le aparezcan todos los errores de input.
 
 		//verifico que lEnd NO haya sido inicializada por usuario
-		if (fractalInfo->lEndInit) {
+		if (userInput->lEndInit) {
 			printf("lEnd ha sido inicializado.");
 			error = true;
 		}
 
 		//verifico que lConstant NO haya sido inicializada
-		if (fractalInfo->lConstantInit) {
+		if (userInput->lConstantInit) {
 			printf("lConstant ha sido inicializado.");
 			error = true;
 		}
 
 
 		//verifico que los ángulos no hayan sido inicializados para que haya coherencia con el fractal que se está pidiendo
-		if (fractalInfo->rAngleInit || fractalInfo->lAngleInit) {
+		if (userInput->rAngleInit || userInput->lAngleInit) {
 			printf("Los ángulos no pueden ser inicializados, ya que no tiene sentido con el tipo de fractal que se está pidiendo");
 			error = true;
 		}
@@ -259,16 +295,15 @@ void runFractal(infoType * fractalInfo, ALLEGRO_DISPLAY* display)
 {
 
 	bool error = false;
-	Coord_t pi;
-	Coord_t pf;
-	if (!strcmp(userInput->type, "UNIFORME"))
+
+	if (!strcmp(fractalInfo->type, "UNIFORME"))
 		triangle_fractal(fractalInfo);
 
-	else if (!strcmp(userInput->type, "POLIGONO"))
+	else if (!strcmp(fractalInfo->type, "POLIGONO"))
 	{
 		polygon(fractalInfo);
 	}
-	else if (!strcmp(userInput->type, "MANDELBROT"))
+	else if (!strcmp(fractalInfo->type, "MANDELBROT"))
 	{
 		MandelAl(fractalInfo, display);
 	}
@@ -293,6 +328,8 @@ bool verifiedInterval(double num, double a, bool aClosed, double b, bool bClosed
 			verified = ((num > a) && (num < b));
 	}
 
+	//printf("\n Es verified es:%d\n", verified);
+	//printf("\n num es:%d\n", num);
 	return verified;
 
 }
@@ -304,90 +341,163 @@ int parseCallback(char *key, char *value, void *userInput)
 
 	bool validInput = false;
 	infoType *myData = (infoType *)userInput;
-	interval_t intervalo;
+
 	//si recibe opción
-	if (key != NULL) {
+	if (key != NULL)
+	{
 
 		//paso a capital letters a la key y al value para comparar cualquier manera de escribir el input. 
 		//(ejemplo: "UniForme" y "uniforme" se leerían "UNIFORME" indistintamente)
 		strToCapital(key);
 		strToCapital(value);
 
-		if (!strcmp(key, "TYPE")) {
+		printf("%s\n", key);
+		printf("%s\n", value);
 
-			if (!strcmp(value, "UNIFORME")) {
-				myData->type = "UNIFORME";
+		if (!strcmp(key, "TYPE"))
+		{
+
+			if (!strcmp(value, "UNIFORME"))
+			{
+				strcpy_s(myData->type, "UNIFORME");
 				validInput = true;
 			}
-			else if (!strcmp(value, "POLIGONO")) {
-				myData->type = "POLIGONO";
+			else if (!strcmp(value, "POLIGONO"))
+			{
+				strcpy_s(myData->type, "POLIGONO");
 				validInput = true;
 			}
-			else if (!strcmp(value, "MANDELBROT")) {
-				myData->type = "MANDELBROT";
+			else if (!strcmp(value, "MANDELBROT"))
+			{
+				strcpy_s(myData->type, "MANDELBROT");
 				validInput = true;
 			}
 			else
+			{
+				strcpy_s(myData->type, "ERROR");
 				printf("Parámetro incorrecto!");
+			}
 		}
-		else if (!strcmp(key, "LSTART")) {
+		else if (!strcmp(key, "LSTART"))
+		{
 
 			//verifico que lStart no haya sido inicializada por usuario y pertenezca a (0, 100]	
 			validInput = verifiedIntervalAndInit(myData->lStartInit, &myData->lStart, value, 0, false, 100, true);
+			if (validInput == true)
+			{
+				myData->lStartInit++;
+				myData->lStart=atof(value);
+			}
+
+			//printf("\nValidinput:%d\n", validInput);
 
 		}
 		else if (!strcmp(key, "N")) {
 
-			//verifico que lStart no haya sido inicializada por usuario y pertenezca a (0, 100]	
-			validInput = verifiedIntervalAndInit(myData->N, &myData->N, value, 0, false, 100, true);
-
+			//verifico que el numero de lados del polígono no haya sido inicializada por usuario y pertenezca a (0, 100]	
+			validInput = verifiedIntervalAndInit(myData->Ninit, &myData->N, value, 0, false,100, true);
+			if (validInput == true)
+			{
+				myData->Ninit++;
+				myData->N = atof(value);
+			}
 		}
 		else if (!strcmp(key, "LEND")) {
 			//verifico que lEnd no haya sido inicializada por usuario y  pertenezca a (0, 100)
 			validInput = verifiedIntervalAndInit(myData->lEndInit, &myData->lEnd, value, 0, false, 100, false);
+			
+			if (validInput == true)
+			{
+				myData->lEndInit++;
+				myData->lEnd = atof(value);
+
+			}
 		}
 		else if (!strcmp(key, "LCONSTANT")) {
 			//verifico que lConstant no haya sido inicializada y pertenezca a (0,1)
 			validInput = verifiedIntervalAndInit(myData->lConstantInit, &myData->lConstant, value, 0, false, 1, false);
+
+			if (validInput == true)
+			{
+				myData->lConstantInit++;
+				myData->lConstant =atof(value);
+
+			}
 		}
 		else if (!strcmp(key, "LEFTANGLE")) {
 			//verifico que leftAngle no haya sido inicializada por usuario y  pertenezca a [-90,0]	
-			validInput = verifiedIntervalAndInit(myData->lAngleInit, &myData->lAngle, value, -90, true, 0, true);
+			validInput = verifiedIntervalAndInit(myData->lAngleInit, &myData->leftAngle, value, -90, true, 0, true);
+
+			if (validInput == true)
+			{
+				myData->lAngleInit++;
+				myData->leftAngle = atof(value);
+			}
 
 		}
 		else if (!strcmp(key, "RIGHTANGLE")) {
 			//verifico que rightAngle no haya sido inicializada por usuario y  pertenezca a [0,90]	
-			validInput = verifiedIntervalAndInit(myData->rAngleInit, &myData->rAngle, value, 0, true, 90, true);
+			validInput = verifiedIntervalAndInit(myData->rAngleInit, &myData->rightAngle, value, 0, true, 90, true);
+
+			if (validInput == true)
+			{
+				myData->rAngleInit++;
+				myData->rightAngle = atof(value);
+			}
 		}
 		else if (!strcmp(key, "X0")) {
 			//verifico que x0 no haya sido inicializado y pertenezca al interior de la pantalla
 			validInput = verifiedIntervalAndInit(myData->x0Init, &myData->x0, value, 0, false, SCREEN_WIDTH, false);
+			if (validInput == true)
+			{
+				myData->x0Init++;
+				myData->x0 = atof(value);
+			}
 		}
 		else if (!strcmp(key, "Y0")) {
 			//verifico que y0 no haya sido inicializado y pertenezca al interior de la pantalla
 			validInput = verifiedIntervalAndInit(myData->y0Init, &myData->y0, value, 0, false, SCREEN_HEIGHT, false);
+
+			if (validInput == true)
+			{
+				myData->y0Init++;
+				myData->y0 = atof(value);
+			}
 		}
-		else if (!strcmp(key, "XF") {
+		else if (!strcmp(key, "XF")) {
 			//verifico que xF no haya sido inicializado y pertenezca al interior de la pantalla
 			validInput = verifiedIntervalAndInit(myData->xFInit, &myData->xF, value, 0, false, SCREEN_WIDTH, false);
+			if (validInput == true)
+			{
+				myData->xFInit++;
+				myData->xF = atof(value);
+			}
 		}
 		else if (!strcmp(key, "YF")) {
 			//verifico que yF no haya sido inicializado y pertenezca al interior de la pantalla
 			validInput = verifiedIntervalAndInit(myData->yFInit, &myData->yF, value, 0, false, SCREEN_HEIGHT, false);
+			
+			if (validInput == true)
+			{
+				myData->yFInit++;
+				myData->yF = atof(value);
+			}
 		}
 		else {
 			validInput = false;
 			printf("Hay variables que han sido inicializadas más de una vez o que no pertenecen al rango de intervalos correcto!");
 		}
 	}
-
+	
+	printf("\nValidinput:%d\n", validInput);
 	return validInput;
 
 
 }
 
 
-void strToCapital(char * str) {
+void strToCapital(char * str) 
+{
 
 	int i = 0;
 
@@ -411,7 +521,7 @@ bool isFloatNumber(char * str) {
 	}
 	else
 		isNumeric = true;
-
+	//printf("\n Es numerico es:%d\n", isNumeric);
 	return isNumeric;
 }
 /*************************************
@@ -432,17 +542,26 @@ bool isFloatNumber(char * str) {
 *	booleando. true si el número pertenece y la variable no había sido previamente inicializada. false caso contrario.
 */
 
-bool verifiedIntervalAndInit(bool isInit, double * parameter, char *value, double a, double b, bool aClosed, bool bClosed);
 
-bool verifiedIntervalAndInit(bool isInit, double * parameter, char *value, double a, double b, bool aClosed, bool bClosed) {
+bool verifiedIntervalAndInit(bool isInit, double * parameter, char *value, double a, bool aClosed, double b, bool bClosed) {
 
 	bool validInput = false;
+	bool i;
 
 	if (!isInit && isFloatNumber(value) && verifiedInterval(atof(value), a, aClosed, b, bClosed)) {
 		*parameter = atof(value);
 		validInput = true;
+		//printf("\nValidinput:%d\n", validInput);
 	}
+	/*
+	i = isFloatNumber(value);
+	printf("\nisFloatNumber(value):%d\n", i);
 
+	i = verifiedInterval(atof(value), a, aClosed, b, bClosed);
+	printf("\nerifiedInterval:%d\n", i);
+
+	printf("\nisInit:%d\n", isInit);
+	*/
 	return validInput;
 }
 

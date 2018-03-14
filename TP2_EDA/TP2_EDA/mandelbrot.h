@@ -3,8 +3,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <allegro5/allegro.h>
 #include <allegro5/allegro_color.h>
-#include "allegro5/allegro5.h"
+#include <allegro5/allegro_primitives.h>
+#include "general.h"
 
 #ifndef _COORD_T 
 #define _COORD_T

@@ -1,11 +1,11 @@
 #pragma once
+#include "general.h"
+
 typedef struct
 {
 	double xcoord, ycoord;
 }point;
-typedef struct {
-	double x0, y0, leftAngle, rightAngle, lStart, lEnd;
-}infoType;
+
 //LO PONGO ACA POR AHORA //
 #include <allegro5/allegro.h>
 #include <allegro5/allegro_image.h>

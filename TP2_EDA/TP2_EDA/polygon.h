@@ -14,6 +14,7 @@
 #ifndef DRAW_FRACTALS_H
 #define DRAW_FRACTALS_H
 #include <corecrt_math_defines.h>
+#include "general.h"
 
 
 #define PAUSA	0.001

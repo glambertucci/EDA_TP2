@@ -77,10 +77,10 @@ void recursive_polygon(double xi, double yi, double lStart, double lConst, doubl
 
 void polygon(infoType * myData)
 {
-	double xi = (myData->xo);    //Guardo la información recibida mediante la estrcutura
-	double yi = (myData->yo);,
+	double xi = (myData->x0);    //Guardo la información recibida mediante la estrcutura
+	double yi = (myData->y0);
 	double lStart = (myData->lStart);
-	double lConst = (myData->lConst);
+	double lConst = (myData->lConstant);
 	double lEnd = (myData->lEnd);
 	unsigned int gradoPoligono = (myData->N);
 
@@ -95,7 +95,7 @@ void recursive_polygon(double xi, double yi, double lStart, double lConst, doubl
 	if (lStart <= lEnd) //Caso base
 		return;
 
-	int contador;  //Contador para moverme dentro del arreglo de puntos
+	unsigned int contador;  //Contador para moverme dentro del arreglo de puntos
 	double apotema = (lStart * gradoPoligono) / (16 * (sqrt(2) - 1)); //se calcula la distancia del centro de la figura al centro de un lado
 
 	//Creo con memoria dinámica un arreglo para ir guardando los puntos de dibujo a medida que los voy necesitando
@@ -126,7 +126,7 @@ void recursive_polygon(double xi, double yi, double lStart, double lConst, doubl
 	al_rest(PAUSA);
 
 	for (contador = 0; contador < gradoPoligono; contador++)//Recursión
-		recursive_polygon(puntos_de_dibujo[contador].xcord, puntos_de_dibujo[contador].ycord, lStart * lConst, lConst, lEnd, gradoPoligono);
+		recursive_polygon(puntos_de_dibujo[contador].xcord, puntos_de_dibujo[contador].ycord, lStart * lConst, lConst, lEnd, gradoPoligono,angulo);
 
 	free(puntos_de_dibujo);
 }
