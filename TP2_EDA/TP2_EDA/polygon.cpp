@@ -4,7 +4,6 @@
 #include <allegro5/allegro_primitives.h>
 #include <stdio.h>
 #include <math.h>
-#include "input_manage_verification.h"//data types
 #include "polygon.h"
 
 
